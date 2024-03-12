@@ -73,3 +73,65 @@ desc escritor;
 drop table libro;
 drop table escritor;
 drop database libros2410;
+
+-- ----------------------------------------------------------
+
+-- 08/03/24
+
+INSERT INTO escritor VALUE(NULL, 'GABRIEL', 'GARCIA', 'MARQUEZ', '66', 'COLOMBIANA');
+
+INSERT INTO escritor (nombre, paterno, nacionalidad) 
+VALUES('JUAN NEPOMUCENO', 'RULFO', 'MEXICANA');
+
+INSERT INTO escritor (nombre, paterno) 
+VALUES('AMPARO', NULL);
+
+INSERT INTO escritor (pais, paterno, nombre)
+VALUES ('52', 'GARRO', 'ELENA');
+
+INSERT INTO escritor SET -- conjunto de pares campo-valor
+id_escritor = 100, nombre = 'ISAAC', paterno = 'ASIMOV', pais=1, nacionalidad = 'ESTADOUNIDENSE';
+
+INSERT INTO escritor SET  nombre = 'OCTAVIO', paterno = 'PAZ';
+
+select * from escritor;
+
+desc libro;
+show index from libro;
+
+INSERT INTO libro VALUES -- 4 reglones en 1 sin utilizar 4 insert, insertar datos en bloque
+(null, 1, 'Cien años de Soledad', null),
+(null, 1, 'El amor en los tiepos de Colera', null),
+(null, 100, 'Yo Robot', null),
+(null, 100, 'Fundacion', null);
+
+INSERT INTO libro VALUES (null, 300, 'El libro en llamas',  null);
+
+INSERT INTO libro VALUES (null, 3, 'El libro en llamas',  null);
+
+select * from libro;
+
+show variables like '%safe%';
+
+select * from escritor;
+
+-- actualizo con UPDATE
+update escritor set pais = 52;
+
+update escritor set pais = 52 WHERE nacionalidad = 'MEXICANA';
+
+set sql_safe_updates = 0;
+
+update escritor set pais = 52;
+
+update escritor set id_escritor = id_escritor + 1000;
+
+delete from escritor WHERE id_escritor = 1001;
+
+select * from escritor;
+select * from libro;
+
+
+
+
+
