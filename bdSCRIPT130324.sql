@@ -74,4 +74,180 @@ select
  order by sexo, ap_paterno asc, ap_materno, nombre asc;
  
  
+ 
+ SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumno;
+ 
+ -- like % ó _ "buscar cualquier cosa que contenga "nuestra cadena" cualuqier cadena 
+ 
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where nombre like 'adrian%';
+ 
+  -- termina con Adrian
+ 
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where nombre like '%adrian';
+ 
+   -- 4 caracteres
+ 
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where nombre like '____';
+ 
+ SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where nombre not like '____';
+ 
+  SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where nombre like '__a_';
+ 
+   SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where nombre like '%a_';
+ 
+    SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where nombre like '%a_';
+ 
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where nombre like '% %';
+ 
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where nombre like '% ____'; 
+ 
+ SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where nombre like '____ ____'; 
+ 
+  SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where nombre like '% % %'; 
+ 
+ 
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where email like '%@%';  
+ 
+ SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where email not like '%@%.%' and email != ' ';  
+ 
+select distinct ciudad from alumnos order by 1;
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where ciudad like 'queretaro';  
+ 
+ SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos
+ where ciudad like '%quer%' or ciudad like '%qro%';  
+ 
+use colegio2410;
+create temporary table alumnos_tmp as SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+ from alumnos;
+ 
+ select * from alumnos_tmp;
+ 
+select distinct ciudad from alumnos_tmp order by 1;
+ 
+update alumnos_tmp set ciudad = 'QUERETARO'
+where ciudad like '%quer%' or ciudad like '%qro%';
+
+show variables like '%safe%';
+set sql_safe_updates = 0;
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where curp like '___________DF%';
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where curp like '____95____HDF%';
+
+select ciudad, count(*) nreg
+from alumnos
+group by ciudad
+order by 1;
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, 
+SEXO, if(SEXO = 'M', 'MASCULINO', IF(SEXO = 'F', 'FEMENINO', 'SV')) SEXOIF
+from alumnos; 
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where ciudad rlike '(QUER|QRO])';
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where nombre rlike 'jose';
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where ciudad rlike '^jose';   -- Inicia
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where nombre rlike 'jose%';   -- termina
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where nombre rlike '(jose|adrian|ale)';  -- | = or
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where nombre rlike '(^jose|adrian|ale)';  -- | = or
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where nombre rlike '[a-zA-Z]{5}'; -- entre corchete [] = rangos, entre llaves {} = numero de veces o posiciones 
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where nombre rlike '(a){Z}'; 
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where nombre rlike '.{7}'; 
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where nombre rlike '^.{7}$';  -- inicia y temina que tenga 7 caracteres
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where email rlike '^[^0-9]*$'; 
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where email rlike '[0-9]'; 
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where curp rlike '^[A-Za-z]{4,}'; 
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where curp rlike '^[A-Za-z]{4}[0-9]{6}[HM]'; 
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where curp rlike '^[A-Za-z]{4}[0-9]{6}[HM][A-Z]{2}'; 
+
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where curp rlike '.+@.(net|info)$'; 
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where curp rlike '.+@*.mx$'; 
+
+SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
+from alumnos
+where curp rlike '.+@*.mx$'; 
 
