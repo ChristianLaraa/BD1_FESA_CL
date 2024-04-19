@@ -251,3 +251,94 @@ SELECT NOMBRE, AP_PATERNO, CIUDAD, SEXO, CURP, EMAIL
 from alumnos
 where curp rlike '.+@*.mx$'; 
 
+-- funciones de cadena 
+select concat(ap_paterno, ' ', ap_materno, ' ', nombre) alumno
+from alumnos order by 1;
+
+select * from
+(select concat(ap_paterno, ' ', ap_materno, ' ', nombre) alumno
+from alumnos ) a
+where alumno like '%ros%';
+
+select concat(ap_paterno, ' ', ap_materno, ' ', nombre) alumno
+from alumnos
+where
+concat(ap_paterno, ' ', ap_materno, ' ', nombre) like '%ros%';
+
+select concat_ws('  ', ap_paterno, ' ', ap_materno, nombre, ciudad, peso, sexo, curp) alumno
+from alumnos;
+
+select ucase (nombre), upper(nombre), lcase(nombre), lower(nombre)
+from alumnos;
+
+select ucase('Patito 23'), lcase('Patito 23');  -- ucase = mayus.  lcase = minus
+
+select lcase(concat_ws(' ', ap_paterno, ap_materno, nombre))
+alumno
+from alumnos;
+
+select distinct nombre, left(nombre, 3), right (nombre, 3), 
+substr(nombre, 3), substr(nombre, 3, 3),
+mid(nombre, 3), mid(nombre, 3, 3), mid(nombre, 3, 5)
+from alumnos order by 1;
+
+select distinct nombre, locate(' ', nombre),
+locate(' ', nombre, 7)
+from alumnos order by 1;
+
+select distinct nombre, locate(' ', nombre) 
+from alumnos 
+where locate (' ', nombre) > 0
+order by 1;
+
+select locate(' ', nombre) locate, count(*) 
+from alumnos 
+group by locate (' ', nombre)
+order by 1;
+
+
+select distinct nombre, length(nombre), 
+length(lcase(concat_ws(' ', ap_paterno, ap_materno, nombre))) lalu
+from alumnos order by 2 desc;
+
+
+-- listar el año, mes y dia de nacimiento de los alumnos con un curp valido
+
+select concat_ws(' ', ap_paterno, ap_materno, nombre) alu,
+curp, substr(curp, 5,2) anio, substr(curp,7,2) mes, substr(curp, 9,2) dia,
+if(left(substr(curp,5,2),1) = '0', '20', 19) pre,
+concat(if(left(substr(curp,5,2),1) = '0', '20', 19),
+   substr(curp,5,2)) aniocompleto
+from alumnos
+where length(curp) = 18
+order by 3;
+
+
+select concat_ws(' ', ap_paterno, ap_materno, nombre) alu,
+curp, concat_ws('-',
+concat(if(left(substr(curp,5,2),1) = '0', '20', 19),
+	substr(curp,5,2)),
+    substr(curp,7,2),
+    substr(curp,9,2)
+    ) fnac
+    from alumnos
+    where length(curp) = 18
+    order by 3;
+    
+select distinct nombre, locate(' ', nombre),
+left(nombre, locate(' ', nombre) - 1) n1,
+right(nombre, locate(' ',  nombre) + 1),
+mid(nombre, locate(' ', nombre) + 1)  n2
+from alumnos
+order by 1;
+
+
+select distinct nombre, locate(' ', nombre),
+if(locate(' ', nombre) > 0,
+ left(nombre, locate(' ', nombre)-1), nombre) n1,
+if(locate(' ', nombre) > 0,
+	mid(nombre, locate(' ',nombre) + 1), ' ')n2
+    from alumnos
+    order by 1;
+ 
+ 
