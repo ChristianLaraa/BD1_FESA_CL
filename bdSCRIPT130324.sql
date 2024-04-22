@@ -340,5 +340,65 @@ if(locate(' ', nombre) > 0,
 	mid(nombre, locate(' ',nombre) + 1), ' ')n2
     from alumnos
     order by 1;
- 
- 
+    
+select distinct nombre, repeat(nombre,4), repeat('-', 30 - LENGTH(NOMBRE)),
+concat(nombre, repeat('-', 30 - LENGTH(NOMBRE))) C1
+from alumnos order by 1;
+
+ select MAX(LENGTH(nombre)) Mn, MAX(LENGTH(ap_paterno)) Mp, MAX(LENGTH(ap_materno))Mm, MAX(LENGTH(ciudad)) Mc
+ from alumnos;
+
+
+-- @ = una variable
+set @sep = '-';
+select concat (
+nombre, repeat(@sep, 25 - LENGTH(NOMBRE)),
+ap_paterno, repeat(@sep, 25 - LENGTH(ap_paterno)),
+ap_materno, repeat(@sep, 25 - LENGTH(ap_materno)),
+curp, repeat(@sep, 18 - LENGTH(curp)),
+ciudad, repeat(@sep, 35 - LENGTH(ciudad)),
+sexo, repeat(@sep, 1 - LENGTH(sexo))
+) campo
+from alumnos order by 1;
+
+
+select count (nombre) n, count (ap_paterno) p, count (ap_materno) m,
+count (curp) c, count(ciudad) cd, count (sexo) s 
+from alumnos;
+
+select nombre, ciudad, ifnull(ciudad, '')
+from alumnos order by 2;
+
+set @sep = ' ';
+select concat (
+nombre, repeat(@sep, 25 - LENGTH(NOMBRE)),
+ap_paterno, repeat(@sep, 25 - LENGTH(ap_paterno)),
+ap_materno, repeat(@sep, 25 - LENGTH(ap_materno)),
+curp, repeat(@sep, 18 - LENGTH(curp)),
+-- ifnull (ciudad, ''), repeat(@sep, 35 - LENGTH(ifnull(ciudad, ''))),
+sexo, repeat(@sep, 1 - LENGTH(sexo))
+) campo
+from alumnos order by 1;
+
+
+
+set @sep = ' ';
+select concat (
+nombre, repeat(@sep, 25 - LENGTH(NOMBRE)),
+ap_paterno, repeat(@sep, 25 - LENGTH(ap_paterno)),
+ap_materno, repeat(@sep, 25 - LENGTH(ap_materno)),
+curp, repeat(@sep, 18 - LENGTH(curp)),
+-- ifnull (ciudad, ''), repeat(@sep, 35 - LENGTH(ifnull(ciudad, ''))),
+sexo, repeat(@sep, 1 - LENGTH(sexo))
+) campo
+INTO OUTFILE '/Users/christianlara/Desktop/BD1/ALU_LF_2410.txt'
+fields terminated by ''
+lines terminated by '\n'
+from alumnos order by 1;
+
+show variables like '%secure%';
+
+select sysdate(), curdate(), curtime();  -- fecha y hora del servidor
+
+select sysdate(), date_format(sysdate(), '%Y') anio;
+
