@@ -402,3 +402,104 @@ select sysdate(), curdate(), curtime();  -- fecha y hora del servidor
 
 select sysdate(), date_format(sysdate(), '%Y') anio;
 
+
+-- SCRIPT 24-04-24
+select nombre, fedita,
+date_format(fedita, '%H')hora,
+date_format(fedita, '%r') h12,
+date_format(fedita, '%T') h24,
+date_format(fedita, '%h %p') hmasampm
+from alumnos;
+
+set lc_time_names = 'es_MX';
+select nombre, fedita,
+date_format(fedita, '%W %d de %M del año %Y a las %H horas') hora
+from alumnos;
+
+select nombre, fedita,
+YEAR(fedita), month(fedita), monthname(fedita), day(fedita), 
+dayname(fedita), week(fedita), dayofyear(fedita), quarter(fedita),
+hour(fedita), minute(fedita), second(fedita)
+from alumnos;
+
+set @f = '2023-12-31 23:59:59';
+select 
+DATE_ADD(@f, INTERVAL 1 SECOND) mas1seg,
+DATE_ADD(@f, INTERVAL 1 MINUTE) ma1min,
+DATE_ADD(@f, INTERVAL 1 HOUR) mas1hora,
+DATE_ADD(@f, INTERVAL 1 DAY) mas1dia,
+DATE_ADD(@f, INTERVAL 1 WEEK) mas1sem,
+DATE_ADD(@f, INTERVAL 1 MONTH) mas1mes,
+DATE_ADD(@f, INTERVAL 1 QUARTER) mas1trim,
+DATE_ADD(@f, INTERVAL 1 YEAR) mas1anio;
+
+
+select 
+DATE_ADD(@f, INTERVAL -1 SECOND) menos1seg,
+DATE_ADD(@f, INTERVAL -1 MINUTE) mmenos1min;
+
+select  -- SUB EN POSIUTIVO RESTA
+DATE_SUB(@f, INTERVAL 1 SECOND) menos1seg,
+DATE_SUB(@f, INTERVAL 1 MINUTE) mmenos1min;
+
+select  -- SUB EN NEGATIVOS SUMA
+DATE_SUB(@f, INTERVAL -1 SECOND) menos1seg,
+DATE_SUB(@f, INTERVAL -1 MINUTE) mmenos1min;
+
+select sysdate() hlocal, -- Hora local vs hora Tijuana vs hora Buenos Aires
+DATE_ADD(sysdate(), INTERVAL -2 HOUR) hTJ,
+DATE_ADD(sysdate(), INTERVAL 3 HOUR) hBA;
+-- mejor usar date add para sumar y date sub para restar
+
+select nombre, fedita,
+DATEDIFF(sysdate(), fedita) diffendias,
+(DATEDIFF(sysdate(), fedita) * 24) diffhr,
+(DATEDIFF(sysdate(), fedita) / 7) diffsemanas,
+TIMESTAMPDIFF(HOUR, fedita, sysdate())difhrts,
+TIMESTAMPDIFF(WEEK, fedita, sysdate()) difsemts,
+TIMESTAMPDIFF(YEAR, fedita, sysdate()) difanio
+from alunos;
+
+select nombre, fedita,
+EXTRACT(DAY from fedita) dia,
+EXTRACT(YEAR from fedita) anio,
+EXTRACT(MONTH from fedita) mes
+from alumnos;
+
+select nombre, fedita,
+DATEDIFF(sysdate(), fedita) diffendias,
+FROM_DAYS(DATEDIFF(sysdate(), fedita))
+from alumnos;
+
+select from_days(367),
+from_days(100), from_days(1000), from_days(10000),
+from_days(100000);
+
+select nombre, fedita,
+DATEDIFF(sysdate(), fedita) diffendias,
+FROM_DAYS(DATEDIFF(sysdate(), fedita)) fd,
+date_format(FROM_DAYS(DATEDIFF(sysdate(), fedita)),
+'%Y años, %m meses y %d dias') f,
+concat(
+YEAR(FROM_DAYS(DATEDIFF(sysdate(), fedita))), ' años ',
+MONTH(FROM_DAYS(DATEDIFF(sysdate(), fedita))), ' meses y ',
+DAY(FROM_DAYS(DATEDIFF(sysdate(), fedita))), ' dias '
+) f2
+from alumnos;
+
+select
+date_format(FROM_DAYS(DATEDIFF(sysdate(), '2004-12-09')),
+'%Y años, %m meses y %d dias') edad;
+
+SELECT now(), LAST_DAY(now()), last_day('2024-02-01'),
+DAY(last_day('2024-02-01'));
+
+select distinct YEAR(fedita) anio,
+CONCAT(YEAR(fedita), '.02-01') feb,
+if(DAY(last_day(CONCAT(YEAR(fedita), '.02-01'))) = 29, 'Bisiesto',
+'Biciesto', 'No biciesto') b
+from alumnos;
+
+
+
+
