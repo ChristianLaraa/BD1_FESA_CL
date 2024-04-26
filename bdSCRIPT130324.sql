@@ -497,8 +497,74 @@ DAY(last_day('2024-02-01'));
 select distinct YEAR(fedita) anio,
 CONCAT(YEAR(fedita), '.02-01') feb,
 if(DAY(last_day(CONCAT(YEAR(fedita), '.02-01'))) = 29, 'Bisiesto',
-'Biciesto', 'No biciesto') b
+'Biciesto' 'No biciesto') b
 from alumnos;
+
+-- CLASE 26_04-24
+
+select * from niveles;
+select * from grados;
+
+select * from niveles, grados;
+
+select * from niveles n, grados g where n.id_nivel = g.id_grado;
+
+select count(*)from alumnos;
+select count(*)from pagos;
+
+select count(*) from alumnos a, pagos p;
+
+select * from pagos;
+
+select * from alumnos a, pagos p order by 1 limit 100;
+
+select * from alumnos a, pagos p
+where a.clave_alu = p.clave_alu;
+
+select * from cursos;
+
+select * 
+from alumnos a, pagos p, cursos c
+where a.clave_alu = p.clave_alu
+AND p.id_curso = c.id_curso;
+
+select a.clave_alu, a.nombre, ap_paterno, p.*
+from alumnos a, pagos p, cursos c
+where a.clave_alu = p.clave_alu
+AND p.id_curso = c.id_curso;
+
+select a.clave_alu, a.nombre, ap_paterno, pago, fecha_pago, abreviatura curso
+from alumnos a, pagos p, cursos c
+where a.clave_alu = p.clave_alu
+AND p.id_curso = c.id_curso;
+
+select a.clave_alu, a.nombre, ap_paterno, pago, fecha_pago, abreviatura curso
+from alumnos a, pagos p, cursos c
+where a.clave_alu = p.clave_alu
+AND p.id_curso = c.id_curso
+AND  sexo = 'f'
+AND month(fecha_pago) = 4
+AND abreviatura = '2017-2018';
+
+select a.clave_alu, a.nombre, ap_paterno, pago, fecha_pago, abreviatura curso
+from (select * from alumnos where sexo = 'f') a,
+(select * from pagos where month(fecha_pago) = 4) p, 
+(select * from cursos where abreviatura = '2017-2018') c
+where a.clave_alu = p.clave_alu
+AND p.id_curso = c.id_curso;
+
+select a.clave_alu, a.nombre, ap_paterno, ap_materno, 
+sum(pago) tpago, count(*) npagos
+from alumnos a, 
+(select clave_alu, sum(pago) tpago, count(*) npagos 
+	from pagos
+    group by clave_alu
+    ) p
+where a.clave_alu = p.clave_alu
+group by a.clave_alu, a.nombre, ap_paterno, ap_materno
+order by 3, 4, 2;
+-- group de 3M de registros 
+
 
 
 
