@@ -566,6 +566,89 @@ order by 3, 4, 2;
 -- group de 3M de registros 
 
 
+-- clase 29-04-24
+
+select a.clave_alu, a.nombre, ap_paterno, ap_materno
+from alumnos a
+where a.clave_alu in(select distinct clave_alu from pagos);
+
+select a.clave_alu, a.nombre, ap_paterno, ap_materno
+from alumnos a
+where a.clave_alu not in(select distinct clave_alu from pagos);
+
+select *
+from alumnos a, pagos p
+where a.clave_alu = p.clave_alu;
+
+select * 
+from alumnos a 
+JOIN pagos p ON(a.clave_alu = p.clave_alu);
+
+select a.clave_alu, a.nombre, ap_paterno, ap_materno, p.clave_alu, p.*
+from alumnos a
+JOIN pagos p ON(a.clave_alu = p.clave_alu);
+
+select a.clave_alu, a.nombre, ap_paterno, ap_materno, p.*
+from alumnos a
+left join pagos p ON(a.clave_alu = p.clave_alu)
+where p.clave_alu is null
+order by 5;
+
+select a.clave_alu, a.nombre, ap_paterno, ap_materno, p.*
+from alumnos a
+join pagos p ON(a.clave_alu = p.clave_alu)
+order by 5;
+
+select a.clave_alu, a.nombre, ap_paterno, ap_materno, pago, fecha_pago, c.*
+from alumnos a
+join pagos p ON(a.clave_alu = p.clave_alu)
+join cursos c on(p.id_curso = c.id_curso)
+order by 5;
+
+select a.clave_alu, a.nombre, ap_paterno, ap_materno, pago, fecha_pago, c.*
+from alumnos a
+join pagos p ON(a.clave_alu = p.clave_alu)
+right join cursos c on(p.id_curso = c.id_curso)
+order by 7;
+
+select a.clave_alu, a.nombre, ap_paterno, ap_materno, 
+pago, fecha_pago, p.id_curso, c.*
+from alumnos a
+join pagos p ON(a.clave_alu = p.clave_alu)
+right join cursos c on(p.id_curso = c.id_curso)
+where P.id_curso is null
+order by 7;
+
+-- pago de un curso no valido
+select a.clave_alu, a.nombre, ap_paterno, ap_materno, 
+pago, fecha_pago, p.id_curso, c.*
+from alumnos a
+join pagos p ON(a.clave_alu = p.clave_alu)
+left join cursos c on(p.id_curso = c.id_curso)
+where C.id_curso is null
+order by 7;
+
+select a.clave_alu, a.nombre, ap_paterno, ap_materno,  p.clave_alu, 
+count(*) npagos, sum(pago) tpago
+from alumnos a
+left join pagos p ON(a.clave_alu = p.clave_alu)
+group by a.clave_alu, a.nombre, ap_paterno, ap_materno,  p.clave_alu
+order by 5;
+
+select a.clave_alu, a.nombre, ap_paterno, ap_materno, 
+count(p.clave_alu) npagos, ifnull(sum(pago),0) tpago
+from alumnos a
+left join pagos p ON(a.clave_alu = p.clave_alu)
+group by a.clave_alu, a.nombre, ap_paterno, ap_materno,  p.clave_alu
+order by 5;
+
+select a.clave_alu, a.nombre, ap_paterno, ap_materno, pago, fecha_pago
+from alumnos a
+join pagos p ON(a.clave_alu = p.clave_alu);
+
+select a.clave_alu, a.nombre, ap_paterno, ap_materno, pago, fecha_pago
+from alumnos a
+natural join pagos p;
 
 
 
