@@ -650,5 +650,118 @@ select a.clave_alu, a.nombre, ap_paterno, ap_materno, pago, fecha_pago
 from alumnos a
 natural join pagos p;
 
+select ciudad, COUNT(p.clave_alu) npagos, ifnull(sum(pago),0) tpago,
+avg(pago) promedio
+from alumnos a
+NATURAL LEFT JOIN pagos p
+where YEAR(fecha_pago) = 2017
+group by ciudad;
 
+
+update alumnos set id_estado = null
+where ap_paterno = 'Mejia' and ap_paterno = 'Jimenez' and nombre = 'luisa';
+
+select * from alumnos 
+where ap_paterno = 'Mejia' and ap_paterno = 'Jimenez' and nombre = 'luisa';
+
+select a.clave_alu, concat_ws(' ', ap_paterno, ap_materno, nombres) alumno,
+a.id_estado, e.id_estado, estado, abreviatura
+from alumnos a
+JOIN estados e ON (a.id_estado = e.id_estado);
+
+select a.clave_alu, concat_ws(' ', ap_paterno, ap_materno, nombres) alumno,
+a.id_estado, e.id_estado, estado, abreviatura
+from alumnos a
+LEFT JOIN estados e ON (a.id_estado = e.id_estado)
+order by e.id_estado;
+
+-- Union al menos la misma cantidad de campos en la misma consultas
+
+select * from niveles; -- priemar tabala define el numero de campos
+select * from grados;
+select * from estados;
+
+select * from niveles
+UNION
+select * from grados;
+
+select * from niveles
+UNION
+select * from grados
+UNION
+select id_estado, estado from estados;
+
+-- 
+select * from alumnos;
+select * from profesores;
+
+select clave_alu clave, concat_ws(' ', ap_paterno, ap_materno, nombre) persona,
+sexo, curp, 'alumno' tipo
+from alumnos
+where sexo = 'f'
+UNION
+select clave_prof, concat_ws(' ', apellido_p, apellido_m, nombres) profesor,
+sexo, curp, 'profesor' tipo
+from profesores
+where sexo = 'f'
+order by 2;
+
+select clave_alu clave, concat_ws(' ', ap-paterno, ap_materno, nombre)
+persona,
+sexo, curp, 'alumno' tipo
+from alumnos
+UNION ALL
+select clave_alu clave, concat_ws(' ', ap-paterno, ap_materno, nombre)
+persona,
+sexo, curp, 'alumno' tipo
+from alumnos;
+
+select a.clave_alu, concat_ws(' ', ap_paterno, ap_materno, nombre) alumno,
+a.id_estado, e.id_estado, estado, abreviatura
+from alumnos a
+LEFT JOIN estados e ON(a.id_estado = e.id_estado)
+where e.id_estado is null
+UNION
+select a.clave_alu, concat_ws(' ', ap_paterno, ap_materno, nombre) alumno,
+a.id_estado, e.id_estado, estado, abreviatura
+from alumnos a
+RIGHT JOIN estados e ON(a.id_estado = e.id_estado)
+where e.id_estado is null
+order by 4;
+
+select estado,
+SUM(IF(sexo = ' ', 1, 0)) as 'Sin Dato',
+SUM(IF(sexo = 'f', 1, 0)) as 'Femenino',
+SUM(IF(sexo = 'm', 1, 0)) as 'Maculino'
+from alumnos a
+RIGHT JOIN estados e ON(a.id_estado = e.id_estado)
+GROUP BY estado
+order by 1;
+
+select *, (sindato + femenino + masculino) total
+from (
+select estado,
+SUM(IF(sexo = ' ', 1, 0)) as 'Sin Dato',
+SUM(IF(sexo = 'f', 1, 0)) as 'Femenino',
+SUM(IF(sexo = 'm', 1, 0)) as 'Maculino'
+from alumnos a
+RIGHT JOIN estados e ON(a.id_estado = e.id_estado)
+GROUP BY estado
+) s
+order by 1;
+
+
+select estado,
+SUM(IF(anio = 2017, tpago, 0)) '2017',
+SUM(IF(anio = 2018, tpago, 0)) '2018'
+from 
+(
+select estado, a.clave_alu, YEAR(fecha_pago), anio, sum(pago) tpago
+from alumnos a
+JOIN pagos p on (a.clave_alu = p.clave_alu)
+RIGHT JOIN estados e ON(a.id_estado = e.id_estado)
+GROUP BY estado, a.clave_alu, YEAR(fecha_pago)
+) x
+group by estado
+order by estado;
 
