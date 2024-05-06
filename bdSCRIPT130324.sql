@@ -765,3 +765,102 @@ GROUP BY estado, a.clave_alu, YEAR(fecha_pago)
 group by estado
 order by estado;
 
+-- Vistas = resultado de una consulta SQL de cero, una o varias tablas.
+-- tienen la misma estructura que una tabla: filas y columnas. La unica diferencia es que solo se almacena de elllas la deficnion no los datos
+-- toda vista pertenece a una base de datos.
+-- Tiene Limitaciones una vista puede servir pars crear otra vista, no se puede usar tablas temporales, la estructura de la tabla es persistente
+
+-- SINTAXIS Vistas 
+-- CREATE [OR REPLACE] --> remplaza por una nueva, {}=optativo
+
+use colegio2410;
+-- conservar o tratar de consevar la independencia logica
+
+CREATE OR  REPLACE VIEW estudiantes AS 
+SELECT * FROM alumnos;
+
+show tables;
+
+select * from estudiantes;
+
+select * from 
+information_schema.tables    -- metadatos de los objetos de mi informacion 
+where table_schema = 'colegio2410'
+and table_type = 'VIEW'; -- mayusculas
+
+show create view estudiantes;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `estudiantes` AS 
+select `alumnos`.`clave_alu` AS `clave_alu`,`alumnos`.`clave_admin` AS 
+`clave_admin`,`alumnos`.`ap_paterno` AS `ap_paterno`,`alumnos`.`ap_materno`
+ AS `ap_materno`,`alumnos`.`nombre` AS `nombre`,`alumnos`.`sexo` AS `sexo`,`alumnos`.`curp` 
+ AS `curp`,`alumnos`.`peso` AS `peso`,`alumnos`.`estatura` AS `estatura`,`alumnos`.`direccion`
+ AS `direccion`,`alumnos`.`colonia` AS `colonia`,`alumnos`.`cp` AS `cp`,`alumnos`.`ciudad` 
+ AS `ciudad`,`alumnos`.`id_estado` AS `id_estado`,`alumnos`.`delegacion` AS `delegacion`,`alumnos`.`telefono`
+ AS `telefono`,`alumnos`.`celular` AS `celular`,`alumnos`.`email` AS `email`,`alumnos`.`status_alu` AS 
+ `status_alu`,`alumnos`.`fedita` AS `fedita` from `alumnos`;
+
+CREATE OR REPLACE VIEW alumnas AS
+SELECT * FROM alumnos WHERE sexo = 'f';
+
+select * from alumnas;
+
+select distinct status_alu from alumnos;  -- funcionalidad de vista puede ser esconder campos 
+
+create or replace view alumnos_activos as
+select clave_alu matricula, concat_ws(' ', ap_paterno, ap_materno, nombre) alumno, curp, sexo, ciudad
+from alumnos
+WHERE status_alu = 'AC';
+
+select * from alumnos_activos;
+
+create temporary table alumnos_tmp as
+select * from alumnos;
+
+select * from alumnos_tmp;
+
+truncate table alumnos;
+
+insert into alumnos
+select * from alumnos_tmp;
+
+select matricula, alumno, sum(pago) tpago, count(p.clave_alu) npagos
+from
+alumnos_activos ac 
+LEFT JOIN pagos p ON(ac.matricula = p.clave_alu)
+GROUP BY matricula, alumno
+ORDER BY 2;
+
+
+select matricula, alumno, sum(pago) tpago, count(p.clave_alu) npagos
+from
+alumnos_activos ac 
+LEFT JOIN pagos p ON(ac.matricula = p.clave_alu)
+where sexo = 'f'
+GROUP BY matricula, alumno
+ORDER BY 2;
+
+
+create or replace view personas as 
+select clave_alu clave, concat_ws(' ', ap_paterno, ap_materno, nombre) persona,
+sexo, curp, ciudad, 'alumno' tipo
+from alumnos
+union
+select clave_prof , concat_ws(' ', apellido_p, apellido_m, nombres) profesor,
+sexo, curp, ciudad, 'profesor' tipo
+from profesores;
+
+select * from personas
+order by 2;
+
+CREATE OR REPLACE VIEW personas_qro AS
+select * from personas
+where ciudad rlike '(qro|quer)';
+
+select * from personas_qro order by tipo;
+
+CREATE OR REPLACE VIEW personas_qro AS
+select clave, persona, sexo, curp,
+if(ciudad rlike '(qro|quer)', 'QUERETATO', ciudad) ciudad, tipo
+from personas
+where ciudad rlike '(qro|quer)';
