@@ -864,3 +864,57 @@ select clave, persona, sexo, curp,
 if(ciudad rlike '(qro|quer)', 'QUERETATO', ciudad) ciudad, tipo
 from personas
 where ciudad rlike '(qro|quer)';
+
+select * 
+from INFORMATION_SCHEMA.TRIGGERS
+where event_object_schema = database();
+
+desc cursos;
+
+-- apartir de aquí la consultas terminan con el delimiter
+
+DELIMITER // 
+DROP TRIGGER IF EXISTS bi_cursos //
+CREATE TRIGGER bi_cursos
+BEFORE INSERT ON cursos
+FOR EACH ROW
+BEGIN
+	if(left(NEW.nombre,5) <> 'CURSOS') then
+		SET NEW.nombre = upper(concat(' curso ', NEW.nombre));
+	end if;
+    SET NEW.nombre = upper(NEW.nombre);
+END //
+DELIMITER ;
+
+select * from cursos;
+
+insert into cursos values
+('C014', 'escolar 2019-2020', '2019-2020', '2019-07-31 00:00:00', '2020-07-30 00:00:00'
+),
+('C015', 'curso semestral 2020-2021', '2020-2021', '2020-07-31 00:00:00', '2021-07-30 00:00:00'
+);
+
+insert into cursos values
+('C016', 'escolar 2019-2020', '2019-2020', '2021-07-31 00:00:00', '2020-07-30 00:00:00'
+);
+
+DELIMITER // 
+DROP TRIGGER IF EXISTS bi_cursos //
+CREATE TRIGGER bi_cursos
+BEFORE INSERT ON cursos
+FOR EACH ROW
+BEGIN
+	if(left(NEW.nombre,5) <> 'CURSOS') then
+		SET NEW.nombre = upper(concat(' curso ', NEW.nombre));
+	end if;
+    SET NEW.nombre = upper(NEW.nombre);
+    IF(NEW.ffin <= NEW.finicio) then
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Fecha Final fuera de rango';
+    end if;
+END //
+DELIMITER ;
+
+insert into cursos values
+('C017', 'escolar 2019-2020', '2019-2020', '2021-07-31 00:00:00', '2020-07-30 00:00:00'
+);
