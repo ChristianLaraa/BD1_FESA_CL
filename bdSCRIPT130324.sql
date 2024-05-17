@@ -918,3 +918,84 @@ DELIMITER ;
 insert into cursos values
 ('C017', 'escolar 2019-2020', '2019-2020', '2021-07-31 00:00:00', '2020-07-30 00:00:00'
 );
+
+
+show create trigger bi_cursos;
+
+drop table if exists bitacora;
+create table bitacora(
+	id int not null auto_increment primary key,
+    fecha datetime not null,
+    usuario varchar (50) not null,
+    tabla varchar(50) not null,
+    accion text null
+    );
+select * from bitacora; 
+
+DELIMITER // 
+DROP TRIGGER IF EXISTS bu_cursos //
+CREATE TRIGGER bu_cursos
+BEFORE UPDATE ON cursos
+FOR EACH ROW
+BEGIN
+	DECLARE caso varchar (10) default 'caso 0';
+    SET new.nombre = upper(NEW.nombre);
+    IF NEW.ffin = OLD.ffin THEN 
+		SET NEW.ffin = DATE_ADD(OLD.ffin, INTERVAL 1 day); 
+        SET CASO = 'Caso 1';
+	END IF;
+        IF NEW.ffin <= NEW.ffin THEN 
+        IF NEW.nombre like '%curso%' THEN 
+			SET NEW.ffin = DATE_ADD(OLD.ffin, INTERVAL 1 year); 
+        SET CASO = 'Caso 1';
+	END IF;
+    if new.nombre like '%semestre%' then
+    alter set new.ffin = date_add(old.ffin, interval 1 day)
+    end if;
+    
+    
+
+
+
+	-- CSV
+   -- INSERT INTO bitacora VALUES (NULL, sysdate(), user(), 'CURSOS',
+    -- CONCAT_WS('|', 'ELIMINACION', OLD.id_curso, OLD.nombre, OLD.abreviatura, OLD.finicion, OLD.ffinal));
+    
+    -- JSON
+      INSERT INTO bitacora VALUES (NULL, sysdate(), user(), 'CURSOS',
+      JSON_OBJECT('accion', 'ACTUALIZACION', 'caso', caso,
+      'old_id_curso', OLD.id_curso, 
+      'old_nombre', old.nombre, 'old_abreviatura', OLD.abreviatura, 
+      
+      'finicio', OLD.finicio, 'ffin', OLD.ffin));
+END //
+DELIMITER ;
+
+select * from bitacora;
+select * from cursos;
+select * from cursos_tmp;
+
+create temporary table cursos_tmp as
+select * from cursos;
+
+delete from cursos where id_curso = 'C015';
+delete from cursos where id_curso = 'C014';
+
+delete from cursos;
+
+select id, fecha, JSON_EXTRACT(accion, '$.accion') acc,
+JSON_UNQUOTE(JSON_EXTRACT(accion, '$.abreviatura')) abreviatura,
+JSON_UNQUOTE(accion -> '$.id_curso') id_curso
+from bitacora where id >= 2;
+
+insert into cursos
+select * from cursos_tmp;
+
+truncate table cursos;
+
+update cursos set nombre = 'semestre 2024-2', abreviatura = '2024-2', finicio = '2024-2', finicio = '2024-02-01',
+ffin = '2024-01-01'
+where id_curso = 'C015';
+update cursos set nombre = 'semestre 2024-2', abreviatura = '2024-2', finicio = '2024-2', finicio = '2024-02-01',
+ffin = '2024-01-01'
+where id_curso = 'C014';
